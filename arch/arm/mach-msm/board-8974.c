@@ -108,7 +108,7 @@ extern int msm_show_resume_irq_mask;
 
 #ifdef CONFIG_ANDROID_PERSISTENT_RAM
 /* CONFIG_SEC_DEBUG reserving memory for persistent RAM*/
-#define PERSISTENT_RAM_BASE 0x7FF00000
+#define PERSISTENT_RAM_BASE 0x7FA00000
 #define PERSISTENT_RAM_SIZE SZ_1M
 #define RAM_CONSOLE_SIZE (124*SZ_1K * 2)
 
