@@ -509,6 +509,7 @@ obj-$(CONFIG_SEC_VIENNA_PROJECT) += board-vienna-motor.o
 obj-$(CONFIG_SEC_V2_PROJECT) += board-vienna-motor.o
 
 obj-$(CONFIG_SEC_BSP) += sec_bsp.o
+obj-$(CONFIG_FORCE_FAST_CHARGE) += fastchg.o
 
 ifdef CONFIG_ARCH_MSM8226
 obj-$(CONFIG_SEC_THERMISTOR) += sec_thermistor_8226.o msm8226-thermistor.o
