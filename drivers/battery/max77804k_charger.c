@@ -13,6 +13,7 @@
 #include <linux/mfd/max77804k.h>
 #include <linux/mfd/max77804k-private.h>
 #include <linux/of_gpio.h>
+#include <linux/fastchg.h>
 
 #ifdef CONFIG_USB_HOST_NOTIFY
 #include <linux/host_notify.h>
@@ -948,6 +949,7 @@ static int sec_chg_set_property(struct power_supply *psy,
 	const int usb_charging_current = charger->pdata->charging_current[
 		POWER_SUPPLY_TYPE_USB].fast_charging_current;
 	u8 chg_cnfg_00;
+        int current_now = 0;
 
 	switch (psp) {
 	case POWER_SUPPLY_PROP_STATUS:
@@ -1069,8 +1071,41 @@ static int sec_chg_set_property(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
 		charger->siop_level = val->intval;
 		if (charger->is_charging) {
+			if (force_fast_charge == FAST_CHARGE_FORCE_AC) {
+				switch(charger->cable_type) {
+					case POWER_SUPPLY_TYPE_USB:
+					case POWER_SUPPLY_TYPE_USB_ACA:
+					case POWER_SUPPLY_TYPE_CARDOCK:
+					case POWER_SUPPLY_TYPE_OTG:
+						current_now = FAST_CHARGE_900;
+						goto set_current;
+					case POWER_SUPPLY_TYPE_MAINS:
+						current_now = FAST_CHARGE_1500;
+						goto set_current;
+				}
+			} else if (force_fast_charge ==
+				FAST_CHARGE_FORCE_CUSTOM_MA) {
+				switch(charger->cable_type) {
+					case POWER_SUPPLY_TYPE_USB:
+					case POWER_SUPPLY_TYPE_USB_DCP:
+					case POWER_SUPPLY_TYPE_USB_CDP:
+					case POWER_SUPPLY_TYPE_USB_ACA:
+					case POWER_SUPPLY_TYPE_CARDOCK:
+					case POWER_SUPPLY_TYPE_OTG:
+						current_now = FAST_CHARGE_900;
+						goto set_current;
+					case POWER_SUPPLY_TYPE_MAINS:
+						current_now =
+							min(fast_charge_level,
+							FAST_CHARGE_2200);
+						goto set_current;
+					default:
+						break;
+				}
+			}
+
 			/* decrease the charging current according to siop level */
-			int current_now =
+			current_now =
 				charger->charging_current * val->intval / 100;
 
 			/* do forced set charging current */
@@ -1106,6 +1141,7 @@ static int sec_chg_set_property(struct power_supply *psy,
 					set_charging_current_max);
 			}
 
+set_current:
 			max77804k_set_charge_current(charger, current_now);
 		}
 		break;
