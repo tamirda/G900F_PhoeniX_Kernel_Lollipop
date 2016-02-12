@@ -937,6 +937,8 @@ static int eth_stop(struct net_device *net)
 		 * their own pace; the network stack can handle old packets.
 		 * For the moment we leave this here, since it works.
 		 */
+		in = link->in_ep->desc;
+		out = link->out_ep->desc;
 		usb_ep_disable(link->in_ep);
 		usb_ep_disable(link->out_ep);
 		if (netif_carrier_ok(net)) {
@@ -949,6 +951,8 @@ static int eth_stop(struct net_device *net)
 				return -EINVAL;
 			}
 			DBG(dev, "host still using in/out endpoints\n");
+			link->in_ep->desc = in;
+			link->out_ep->desc = out;
 			usb_ep_enable(link->in_ep);
 			usb_ep_enable(link->out_ep);
 		}
@@ -1205,7 +1209,16 @@ struct net_device *gether_connect(struct gether *link)
 				link->close(link);
 		}
 		spin_unlock(&dev->lock);
+#ifdef CONFIG_USB_ANDROID_SAMSUNG_COMPOSITE
+		if (!dev->port_usb->is_fixed) {
+			printk(KERN_INFO "usb: %s netif carrier on", __func__);
+#endif
 		netif_carrier_on(dev->net);
+#ifdef CONFIG_USB_ANDROID_SAMSUNG_COMPOSITE
+		} else {
+			printk(KERN_INFO "usb: %s in ncm case - no netif carrier ", __func__);
+		}
+#endif
 		if (netif_running(dev->net))
 			eth_start(dev, GFP_ATOMIC);
 
