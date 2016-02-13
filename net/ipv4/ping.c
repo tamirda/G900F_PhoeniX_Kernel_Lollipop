@@ -1183,4 +1183,3 @@ void __init ping_init(void)
 		INIT_HLIST_NULLS_HEAD(&ping_table.hash[i], i);
 	rwlock_init(&ping_table.lock);
 }
-

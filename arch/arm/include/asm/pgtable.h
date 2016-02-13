@@ -245,6 +245,7 @@ static inline void set_pte_at(struct mm_struct *mm, unsigned long addr,
 			      pte_t *ptep, pte_t pteval)
 {
 	unsigned long ext = 0;
+
 	if (addr < TASK_SIZE && pte_present_user(pteval)) {
 		__sync_icache_dcache(pteval);
 		ext |= PTE_EXT_NG;
@@ -252,6 +253,7 @@ static inline void set_pte_at(struct mm_struct *mm, unsigned long addr,
 
 	set_pte_ext(ptep, pteval, ext);
 }
+
 #ifdef CONFIG_TIMA_RKP_L2_GROUP
 static inline void timal2group_set_pte_at(pte_t *ptep, pte_t pteval, 
 			unsigned long tima_l2group_entry_ptr, unsigned long addr,
