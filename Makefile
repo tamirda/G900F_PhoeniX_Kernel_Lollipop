@@ -193,7 +193,7 @@ SUBARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ \
 # Note: Some architectures assign CROSS_COMPILE in their arch/*/Makefile
 export KBUILD_BUILDHOST := $(SUBARCH)
 ARCH		?= arm
-CROSS_COMPILE	?=/home/tamirda/kernel/Toolchain/arm-cortex_a15-linux-gnueabihf-5.3/bin/arm-cortex_a15-linux-gnueabihf-
+CROSS_COMPILE	?=/home/tamirda/kernel/Toolchain/big_bum-linaro-arm-eabi-6.0-cortex-a15-de4760ffdd73/bin/arm-eabi-
 
 # Architecture as present in compile.h
 UTS_MACHINE 	:= $(ARCH)
@@ -245,7 +245,7 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 
 HOSTCC       = gcc
 HOSTCXX      = g++
-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89
+HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu90
 HOSTCXXFLAGS = -O2
 
 # Decide whether to build built-in, modular, or both.
@@ -378,7 +378,7 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -Wno-unused-
 		   -Werror-implicit-function-declaration -fno-pic \
 		   -Wno-format-security -Wno-unused-function -Wno-array-bounds -Wno-logical-not-parentheses \
 		   -Wno-cpp -Wno-declaration-after-statement -fno-var-tracking-assignments -Wno-sizeof-pointer-memaccess -Wno-aggressive-loop-optimizations -Wno-sequence-point \
-		   -std=gnu89 \
+		   -std=gnu90 -Wno-bool-compare -Wno-tautological-compare \
 		   -fno-delete-null-pointer-checks
 
 KBUILD_AFLAGS_KERNEL :=
