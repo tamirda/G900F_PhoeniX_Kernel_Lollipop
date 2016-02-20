@@ -193,7 +193,7 @@ SUBARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ \
 # Note: Some architectures assign CROSS_COMPILE in their arch/*/Makefile
 export KBUILD_BUILDHOST := $(SUBARCH)
 ARCH		?= arm
-CROSS_COMPILE	?=/Kernel_Folder/Toolchain_5.3_a15/bin/arm-cortex_a15-linux-gnueabihf-
+CROSS_COMPILE	?=/home/tamirda/kernel/Toolchain/arm-eabi-4.8/bin/arm-eabi-
 
 # Architecture as present in compile.h
 UTS_MACHINE 	:= $(ARCH)
@@ -373,12 +373,15 @@ LINUXINCLUDE    := -I$(srctree)/arch/$(hdr-arch)/include \
 
 KBUILD_CPPFLAGS := -D__KERNEL__
 
-KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -Wno-unused-variable -Wno-maybe-uninitialized \
-		   -fno-strict-aliasing -fno-common -mcpu=cortex-a15 -mtune=cortex-a15 \
-		   -Werror-implicit-function-declaration -fno-pic \
-		   -Wno-format-security -Wno-unused-function -Wno-array-bounds -Wno-logical-not-parentheses \
-		   -Wno-cpp -Wno-declaration-after-statement -fno-var-tracking-assignments -Wno-sizeof-pointer-memaccess -Wno-aggressive-loop-optimizations -Wno-sequence-point
-
+KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+		   -fno-strict-aliasing -fno-common \
+		   -Werror-implicit-function-declaration \
+		   -Wno-deprecated-declarations \
+	 	   -Wno-maybe-uninitialized \
+		   -Wno-format-security -Wno-unused \
+		   -Wno-array-bounds \
+                   -Wno-sequence-point \
+		   -fno-delete-null-pointer-checks
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
 KBUILD_AFLAGS   := -D__ASSEMBLY__
