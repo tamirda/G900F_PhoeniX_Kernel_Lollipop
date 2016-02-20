@@ -5,7 +5,7 @@ BUILD_TOP_DIR=..
 BUILD_KERNEL_DIR=$(pwd)
 
 SECURE_SCRIPT=$BUILD_TOP_DIR/../buildscript/tools/signclient.jar
-BUILD_CROSS_COMPILE=../prebuilts/gcc/linux-x86/arm/arm-eabi-4.7/bin/arm-eabi-
+BUILD_CROSS_COMPILE=/home/tamirda/kernel/Toolchain/big_bum-linaro-arm-eabi-6.0-cortex-a15-de4760ffdd73/bin/arm-eabi-
 BUILD_JOB_NUMBER=`grep processor /proc/cpuinfo|wc -l`
 
 # Default Python version is 2.7
@@ -13,7 +13,7 @@ mkdir -p bin
 ln -sf /usr/bin/python2.7 ./bin/python
 export PATH=$(pwd)/bin:$PATH
 
-KERNEL_DEFCONFIG=msm8974_sec_defconfig
+KERNEL_DEFCONFIG=PhoeniX_defconfig
 DEBUG_DEFCONFIG=msm8974_sec_eng_defconfig
 SELINUX_DEFCONFIG=selinux_defconfig
 SELINUX_LOG_DEFCONFIG=selinux_log_defconfig
@@ -68,7 +68,7 @@ VARIANT=k${CARRIER}
 DTS_NAMES=msm8974pro-ac-sec-k-
 #DTS_NAMES=msm8974pro-ac-sec
 PROJECT_NAME=${VARIANT}
-VARIANT_DEFCONFIG=msm8974pro_sec_${MODEL}_${CARRIER}_defconfig
+VARIANT_DEFCONFIG=msm8974pro_sec_klte_eur_defconfig
 
 CERTIFICATION=NONCERT
 
@@ -90,8 +90,8 @@ case $1 in
 		BOARD_KERNEL_PAGESIZE=2048
 		BOARD_KERNEL_TAGS_OFFSET=0x01E00000
 		BOARD_RAMDISK_OFFSET=0x02000000
-		BOARD_KERNEL_CMDLINE="console=ttyHSL0,115200,n8 androidboot.hardware=qcom user_debug=31 msm_rtb.filter=0x37 ehci-hcd.park=3"
-		#BOARD_KERNEL_CMDLINE="console=ttyHSL0,115200,n8 androidboot.hardware=qcom user_debug=31 msm_rtb.filter=0x37 ehci-hcd.park=3"
+		BOARD_KERNEL_CMDLINE="console=null androidboot.hardware=qcom user_debug=23 msm_rtb.filter=0x37 ehci-hcd.park=3"
+		#BOARD_KERNEL_CMDLINE="console=null androidboot.hardware=qcom user_debug=23 msm_rtb.filter=0x37 ehci-hcd.park=3"
 		mkdir -p $BUILD_KERNEL_OUT_DIR
 		;;
 
@@ -130,7 +130,7 @@ FUNC_APPEND_DTB()
 }
 
 INSTALLED_DTIMAGE_TARGET=${BUILD_KERNEL_OUT_DIR}/dt.img
-DTBTOOL=$BUILD_TOP_DIR/kernel/tools/dtbTool
+DTBTOOL=$BUILD_TOP_DIR/S5/tools/dtbTool
 
 FUNC_BUILD_DTIMAGE_TARGET()
 {
@@ -145,7 +145,7 @@ FUNC_BUILD_DTIMAGE_TARGET()
 		if ! [ -d $BUILD_TOP_DIR/out/host/linux-x86/bin ] ; then
 			mkdir -p $BUILD_TOP_DIR/out/host/linux-x86/bin
 		fi
-		cp $BUILD_TOP_DIR/kernel/tools/dtbTool $DTBTOOL
+		cp $BUILD_TOP_DIR/S5/tools/dtbTool $DTBTOOL
 	fi
 
 	echo "$DTBTOOL -o $INSTALLED_DTIMAGE_TARGET -s $BOARD_KERNEL_PAGESIZE \
@@ -183,7 +183,7 @@ FUNC_BUILD_KERNEL()
 	make -C $BUILD_KERNEL_DIR O=$BUILD_KERNEL_OUT_DIR -j$BUILD_JOB_NUMBER ARCH=arm \
 			CROSS_COMPILE=$BUILD_CROSS_COMPILE \
 			$KERNEL_DEFCONFIG VARIANT_DEFCONFIG=$VARIANT_DEFCONFIG \
-			DEBUG_DEFCONFIG=$DEBUG_DEFCONFIG SELINUX_DEFCONFIG=$SELINUX_DEFCONFIG \
+			SELINUX_DEFCONFIG=$SELINUX_DEFCONFIG \
 			SELINUX_LOG_DEFCONFIG=$SELINUX_LOG_DEFCONFIG || exit -1
 
 	make -C $BUILD_KERNEL_DIR O=$BUILD_KERNEL_OUT_DIR -j$BUILD_JOB_NUMBER ARCH=arm \
@@ -206,7 +206,7 @@ FUNC_MKBOOTIMG()
 	echo "START : FUNC_MKBOOTIMG"
 	echo "==================================="
 	echo ""
-	MKBOOTIMGTOOL=$BUILD_TOP_DIR/kernel/tools/mkbootimg
+	MKBOOTIMGTOOL=$BUILD_TOP_DIR/tools/mkbootimg
 
 	if ! [ -e $MKBOOTIMGTOOL ] ; then
 		if ! [ -d $BUILD_TOP_DIR/out/host/linux-x86/bin ] ; then
