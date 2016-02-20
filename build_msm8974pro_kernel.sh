@@ -5,7 +5,7 @@ BUILD_TOP_DIR=..
 BUILD_KERNEL_DIR=$(pwd)
 
 SECURE_SCRIPT=$BUILD_TOP_DIR/../buildscript/tools/signclient.jar
-BUILD_CROSS_COMPILE=/home/tamirda/kernel/Toolchain/big_bum-linaro-arm-eabi-6.0-cortex-a15-de4760ffdd73/bin/arm-eabi-
+BUILD_CROSS_COMPILE=/home/tamirda/kernel/Toolchain/arm-eabi-4.8/bin/arm-eabi-
 BUILD_JOB_NUMBER=`grep processor /proc/cpuinfo|wc -l`
 
 # Default Python version is 2.7
