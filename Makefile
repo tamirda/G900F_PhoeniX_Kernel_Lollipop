@@ -380,7 +380,7 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 	 	   -Wno-maybe-uninitialized \
 		   -Wno-format-security -Wno-unused \
 		   -Wno-array-bounds \
-                   -Wno-sequence-point \
+                   -Wno-sequence-point -Wno-frame-larger-than \
 		   -fno-delete-null-pointer-checks
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
