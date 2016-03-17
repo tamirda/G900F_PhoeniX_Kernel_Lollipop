@@ -5,7 +5,7 @@ BUILD_TOP_DIR=..
 BUILD_KERNEL_DIR=$(pwd)
 
 SECURE_SCRIPT=$BUILD_TOP_DIR/../buildscript/tools/signclient.jar
-BUILD_CROSS_COMPILE=/home/tamirda/kernel/Toolchain/arm-eabi-4.8/bin/arm-eabi-
+BUILD_CROSS_COMPILE=/home/tamirda/kernel/Toolchain/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-
 BUILD_JOB_NUMBER=`grep processor /proc/cpuinfo|wc -l`
 
 # Default Python version is 2.7
@@ -90,8 +90,8 @@ case $1 in
 		BOARD_KERNEL_PAGESIZE=2048
 		BOARD_KERNEL_TAGS_OFFSET=0x01E00000
 		BOARD_RAMDISK_OFFSET=0x02000000
-		BOARD_KERNEL_CMDLINE="console=null androidboot.hardware=qcom user_debug=23 msm_rtb.filter=0x37 ehci-hcd.park=3"
-		#BOARD_KERNEL_CMDLINE="console=null androidboot.hardware=qcom user_debug=23 msm_rtb.filter=0x37 ehci-hcd.park=3"
+		BOARD_KERNEL_CMDLINE="console=ttyHSL0,115200,n8 androidboot.hardware=qcom user_debug=31 msm_rtb.filter=0x37 ehci-hcd.park=3"
+		#BOARD_KERNEL_CMDLINE="console=ttyHSL0,115200,n8 androidboot.hardware=qcom user_debug=31 msm_rtb.filter=0x37 ehci-hcd.park=3"
 		mkdir -p $BUILD_KERNEL_OUT_DIR
 		;;
 
@@ -175,15 +175,15 @@ FUNC_BUILD_KERNEL()
 	echo "build secure option="$SECURE_OPTION ""
 	echo "build SEANDROID option="$SEANDROID_OPTION ""
 
-        if [ "$BUILD_COMMAND" == "" ]; then
-                SECFUNC_PRINT_HELP;
-                exit -1;
-        fi
+	if [ "$BUILD_COMMAND" == "" ]; then
+		SECFUNC_PRINT_HELP;
+		exit -1;
+	fi
 
 	make -C $BUILD_KERNEL_DIR O=$BUILD_KERNEL_OUT_DIR -j$BUILD_JOB_NUMBER ARCH=arm \
 			CROSS_COMPILE=$BUILD_CROSS_COMPILE \
 			$KERNEL_DEFCONFIG VARIANT_DEFCONFIG=$VARIANT_DEFCONFIG \
-			SELINUX_DEFCONFIG=$SELINUX_DEFCONFIG \
+			DEBUG_DEFCONFIG=$DEBUG_DEFCONFIG SELINUX_DEFCONFIG=$SELINUX_DEFCONFIG \
 			SELINUX_LOG_DEFCONFIG=$SELINUX_LOG_DEFCONFIG || exit -1
 
 	make -C $BUILD_KERNEL_DIR O=$BUILD_KERNEL_OUT_DIR -j$BUILD_JOB_NUMBER ARCH=arm \
