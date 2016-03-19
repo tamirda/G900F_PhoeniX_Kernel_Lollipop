@@ -937,7 +937,7 @@ static int conn_gadget_function_set_alt(struct usb_function *f,
 
 	printk(KERN_ERR "%s: intf: %d alt: %d\n", __func__, intf, alt);
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,110)
 	ret = config_ep_by_speed(cdev->gadget, f, dev->ep_in);
 	if (ret)
 		return ret;
@@ -953,7 +953,7 @@ static int conn_gadget_function_set_alt(struct usb_function *f,
 		return ret;
 #endif
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,110)
 	ret = config_ep_by_speed(cdev->gadget, f, dev->ep_out);
 	if (ret) {
 		usb_ep_disable(dev->ep_in);
