@@ -1603,6 +1603,7 @@ static int mdss_fb_alloc_fbmem_iommu(struct msm_fb_data_type *mfd, int dom)
 		/* Normal Booting */
 		mfd->fbi->screen_base = NULL;
 		mfd->fbi->fix.smem_start = 0;
+		mfd->fbi->fix.smem_len = size;
 		return 0;
 	} else {
 		of_property_read_u32(pdev->dev.of_node,
