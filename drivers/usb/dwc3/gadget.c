@@ -1918,8 +1918,6 @@ void dwc3_gadget_restart(struct dwc3 *dwc)
 #endif
 	dwc3_writel(dwc->regs, DWC3_DCFG, reg);
 
-	dwc->start_config_issued = false;
-
 #if defined(CONFIG_SEC_H_PROJECT) || defined(CONFIG_SEC_F_PROJECT) || defined(CONFIG_SEC_K_PROJECT)
 	switch (dwc->speed_limit) {
 	case USB_SPEED_FULL:
