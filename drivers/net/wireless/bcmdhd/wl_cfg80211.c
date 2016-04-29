@@ -6677,7 +6677,7 @@ static s32 wl_cfg80211_bcn_set_params(
 
 	return err;
 }
-#endif /* LINUX_VERSION >= VERSION(3,4,110) || WL_COMPAT_WIRELESS */
+#endif /* LINUX_VERSION >= VERSION(3,4,112) || WL_COMPAT_WIRELESS */
 
 static s32
 wl_cfg80211_parse_ies(u8 *ptr, u32 len, struct parsed_ies *ies)
@@ -6905,7 +6905,7 @@ wl_cfg80211_set_ies(
 
 	return err;
 }
-#endif /* LINUX_VERSION >= VERSION(3,4,110) || WL_COMPAT_WIRELESS */
+#endif /* LINUX_VERSION >= VERSION(3,4,112) || WL_COMPAT_WIRELESS */
 
 static s32 wl_cfg80211_hostapd_sec(
 	struct net_device *dev,
@@ -7451,7 +7451,7 @@ fail:
 	return err;
 
 }
-#endif /* LINUX_VERSION < VERSION(3,4,110) || WL_COMPAT_WIRELESS */
+#endif /* LINUX_VERSION < VERSION(3,4,112) || WL_COMPAT_WIRELESS */
 
 #ifdef WL_SCHED_SCAN
 #define PNO_TIME		30
@@ -7593,7 +7593,7 @@ static struct cfg80211_ops wl_cfg80211_ops = {
 	.change_beacon = wl_cfg80211_change_beacon,
 	.start_ap = wl_cfg80211_start_ap,
 	.stop_ap = wl_cfg80211_stop_ap,
-#endif /* LINUX_VERSION < KERNEL_VERSION(3,4,110) && !WL_COMPAT_WIRELESS */
+#endif /* LINUX_VERSION < KERNEL_VERSION(3,4,112) && !WL_COMPAT_WIRELESS */
 #ifdef WL_SCHED_SCAN
 	.sched_scan_start = wl_cfg80211_sched_scan_start,
 	.sched_scan_stop = wl_cfg80211_sched_scan_stop,
@@ -8177,19 +8177,19 @@ wl_notify_connect_status_ap(struct bcm_cfg80211 *cfg, struct net_device *ndev,
 		cfg80211_rx_mgmt(ndev, freq, 0, mgmt_frame, len, GFP_ATOMIC);
 #else
 		cfg80211_rx_mgmt(ndev, freq, mgmt_frame, len, GFP_ATOMIC);
-#endif /* LINUX_VERSION >= VERSION(3,4,110) || WL_COMPAT_WIRELESS */
+#endif /* LINUX_VERSION >= VERSION(3,4,112) || WL_COMPAT_WIRELESS */
 	} else if (event == WLC_E_DISASSOC_IND) {
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)) || defined(WL_COMPAT_WIRELESS)
 		cfg80211_rx_mgmt(ndev, freq, 0, mgmt_frame, len, GFP_ATOMIC);
 #else
 		cfg80211_rx_mgmt(ndev, freq, mgmt_frame, len, GFP_ATOMIC);
-#endif /* LINUX_VERSION >= VERSION(3,4,110) || WL_COMPAT_WIRELESS */
+#endif /* LINUX_VERSION >= VERSION(3,4,112) || WL_COMPAT_WIRELESS */
 	} else if ((event == WLC_E_DEAUTH_IND) || (event == WLC_E_DEAUTH)) {
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0)) || defined(WL_COMPAT_WIRELESS)
 		cfg80211_rx_mgmt(ndev, freq, 0, mgmt_frame, len, GFP_ATOMIC);
 #else
 		cfg80211_rx_mgmt(ndev, freq, mgmt_frame, len, GFP_ATOMIC);
-#endif /* LINUX_VERSION >= VERSION(3,4,110) || WL_COMPAT_WIRELESS */
+#endif /* LINUX_VERSION >= VERSION(3,4,112) || WL_COMPAT_WIRELESS */
 	}
 
 exit:

@@ -15,7 +15,7 @@
 
 /* One can override the Linux version here with an explicit version number */
 /* #define MAX98505_LINUX_VERSION LINUX_VERSION_CODE */
-/* #define MAX98505_LINUX_VERSION KERNEL_VERSION(3,4,110) */
+/* #define MAX98505_LINUX_VERSION KERNEL_VERSION(3,4,112) */
 
 /* Maximum number of MAX98505 devices in the system this driver can support */
 #define MAX_NUM_MAX98505                           2

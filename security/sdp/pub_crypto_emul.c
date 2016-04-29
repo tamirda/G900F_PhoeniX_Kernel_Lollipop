@@ -472,7 +472,7 @@ void pub_crypto_control_init(pub_crypto_control_t *con) {
 
 static int __init pub_crypto_mod_init(void) {
 
-#if (LINUX_VERSION_CODE > KERNEL_VERSION(3,4,110))
+#if (LINUX_VERSION_CODE > KERNEL_VERSION(3,4,112))
 	struct netlink_kernel_cfg cfg = {
 		.input  = crypto_recver,
 	};
