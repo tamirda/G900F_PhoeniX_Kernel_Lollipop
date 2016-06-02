@@ -46,6 +46,7 @@ struct ss_vib {
 	int state;
 	int timeout;
 	int intensity;
+	int timevalue;
 };
 
 void vibe_set_intensity(int intensity)
@@ -200,10 +201,6 @@ static void set_vibrator(struct ss_vib *vib)
 {
 	pr_info("[VIB]: %s, value[%d]\n", __func__, vib->state);
 	if (vib->state) {
-		if (vibrator_drvdata.power_onoff) {
-			if (!vibrator_drvdata.changed_chip)
-				vibrator_drvdata.power_onoff(1);
-		}
 		if(vibrator_drvdata.is_pmic_vib_pwm){ //PMIC PWM
 			gpio_set_value(vibrator_drvdata.vib_pwm_gpio, \
 					VIBRATION_ON);
@@ -230,30 +227,26 @@ static void set_vibrator(struct ss_vib *vib)
 #endif
 		}
 		printk(KERN_DEBUG "[VIB] : %s\n", __func__);
-#if defined(CONFIG_MOTOR_DRV_MAX77803)
-		max77803_vibtonz_en(1);
-#elif defined(CONFIG_MOTOR_DRV_MAX77804K)
+		if (vibrator_drvdata.power_onoff) {
+			if (!vibrator_drvdata.changed_chip)
+				vibrator_drvdata.power_onoff(1);
+		}
+
+#if defined(CONFIG_MOTOR_DRV_MAX77804K)
 		if (vibrator_drvdata.changed_chip) {
 			gpio_direction_output(vibrator_drvdata.changed_en_gpio, VIBRATION_ON);
 			gpio_set_value(vibrator_drvdata.changed_en_gpio,VIBRATION_ON);
-		} else
-			max77804k_vibtonz_en(1);
-#elif defined(CONFIG_MOTOR_DRV_MAX77828)
-		max77828_vibtonz_en(1);
+		}
 #elif defined(CONFIG_MOTOR_DRV_MAX77888)
 		max77888_gpio_en(1);
-		max77888_vibtonz_en(1);
 #elif defined(CONFIG_MOTOR_DRV_DRV2603)
 		drv2603_gpio_en(1);
 #elif defined(CONFIG_MOTOR_ISA1000)
 		gpio_direction_output(vibrator_drvdata.vib_en_gpio,VIBRATION_ON);
 		gpio_set_value(vibrator_drvdata.vib_en_gpio,VIBRATION_ON);
 #endif
+		hrtimer_start(&vib->vib_timer, ktime_set(vib->timevalue / 1000, (vib->timevalue % 1000) * 1000000),HRTIMER_MODE_REL);
 	} else {
-		if (vibrator_drvdata.power_onoff) {
-			if (!vibrator_drvdata.changed_chip)
-				vibrator_drvdata.power_onoff(0);
-		}
 		if(vibrator_drvdata.is_pmic_vib_pwm){  //PMIC PWM 
 			gpio_set_value(vibrator_drvdata.vib_pwm_gpio, \
 					VIBRATION_OFF);
@@ -275,19 +268,17 @@ static void set_vibrator(struct ss_vib *vib)
 #endif
 		}
 		printk(KERN_DEBUG "[VIB] : %s\n", __func__);
-#if defined(CONFIG_MOTOR_DRV_MAX77803)
-		max77803_vibtonz_en(0);
-#elif defined(CONFIG_MOTOR_DRV_MAX77804K)
+		if (vibrator_drvdata.power_onoff) {
+			if (!vibrator_drvdata.changed_chip)
+				vibrator_drvdata.power_onoff(0);
+		}
+#if defined(CONFIG_MOTOR_DRV_MAX77804K)
 		if (vibrator_drvdata.changed_chip) {
 			gpio_direction_output(vibrator_drvdata.changed_en_gpio, VIBRATION_OFF);
 			gpio_set_value(vibrator_drvdata.changed_en_gpio,VIBRATION_OFF);
-		} else
-			max77804k_vibtonz_en(0);
-#elif defined(CONFIG_MOTOR_DRV_MAX77828)
-		max77828_vibtonz_en(0);
+		}
 #elif defined(CONFIG_MOTOR_DRV_MAX77888)
 		max77888_gpio_en(0);
-		max77888_vibtonz_en(0);
 #elif defined(CONFIG_MOTOR_DRV_DRV2603)
 		drv2603_gpio_en(0);
 #elif defined(CONFIG_MOTOR_ISA1000)
@@ -308,15 +299,9 @@ static void vibrator_enable(struct timed_output_dev *dev, int value)
 		pr_info("[VIB]: OFF\n");
 		vib->state = 0;
 	} else {
-		pr_info("[VIB]: ON, Duration : %d msec\n", value);
+		pr_info("[VIB]: ON, Duration : %d msec, intensity : %d\n", value, vib->intensity);
 		vib->state = 1;
-
-		if (value == 0x7fffffff){
-			pr_info("[VIB]: No Use Timer %d\n", value);
-		} else {
-			value = (value > vib->timeout ?	vib->timeout : value);
-			hrtimer_start(&vib->vib_timer, ktime_set(value / 1000, (value % 1000) * 1000000),HRTIMER_MODE_REL);
-		}
+		vib->timevalue = value;
 	}
 	mutex_unlock(&vib->lock);
 	queue_work(vib->queue, &vib->work);
@@ -363,11 +348,43 @@ static int ss_vibrator_suspend(struct device *dev)
 	vib->state = 0;
 	set_vibrator(vib);
 
-	return 0;
-}
+#if defined(CONFIG_MOTOR_DRV_MAX77803)
+	max77803_vibtonz_en(0);
+#elif defined(CONFIG_MOTOR_DRV_MAX77804K)
+	if (!vibrator_drvdata.changed_chip)
+		max77804k_vibtonz_en(0);
+#elif defined(CONFIG_MOTOR_DRV_MAX77828)
+	max77828_vibtonz_en(0);
+#elif defined(CONFIG_MOTOR_DRV_MAX77888)
+	max77888_vibtonz_en(0);
 #endif
 
-static SIMPLE_DEV_PM_OPS(vibrator_pm_ops, ss_vibrator_suspend, NULL);
+	return 0;
+}
+
+static int ss_vibrator_resume(struct device *dev)
+{
+	struct ss_vib *vib = dev_get_drvdata(dev);
+
+	pr_info("[VIB]: %s, intensity : %d\n", __func__, vib->intensity);
+
+#if defined(CONFIG_MOTOR_DRV_MAX77803)
+	max77803_vibtonz_en(1);
+#elif defined(CONFIG_MOTOR_DRV_MAX77804K)
+	if (!vibrator_drvdata.changed_chip)
+		max77804k_vibtonz_en(1);
+#elif defined(CONFIG_MOTOR_DRV_MAX77828)
+	max77828_vibtonz_en(1);
+#elif defined(CONFIG_MOTOR_DRV_MAX77888)
+	max77888_vibtonz_en(1);
+#endif
+
+	return 0;
+}
+
+#endif
+
+static SIMPLE_DEV_PM_OPS(vibrator_pm_ops, ss_vibrator_suspend, ss_vibrator_resume);
 
 static int vibrator_parse_dt(struct ss_vib *vib)
 {
