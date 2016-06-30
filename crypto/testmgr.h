@@ -57,7 +57,7 @@ struct cipher_testvec {
 	char *result;
 	unsigned short tap[MAX_TAP];
 	int np;
-	unsigned char fail;
+	bool fail;
 	unsigned char wk; /* weak key flag */
 	unsigned char klen;
 	unsigned short ilen;
@@ -74,7 +74,7 @@ struct aead_testvec {
 	unsigned char atap[MAX_TAP];
 	int np;
 	int anp;
-	unsigned char fail;
+	bool fail;
 	unsigned char novrfy;	/* ccm dec verification failure expected */
 	unsigned char wk; /* weak key flag */
 	unsigned char klen;

@@ -5,7 +5,7 @@ BUILD_TOP_DIR=..
 BUILD_KERNEL_DIR=$(pwd)
 
 SECURE_SCRIPT=$BUILD_TOP_DIR/../buildscript/tools/signclient.jar
-BUILD_CROSS_COMPILE=/home/tamirda/kernel/Toolchain/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-
+BUILD_CROSS_COMPILE=/home/tamirda/kernel/Toolchain/UBERTC-arm-linux-androideabi-5.3-11159e23abe6/bin/arm-linux-androideabi-
 BUILD_JOB_NUMBER=`grep processor /proc/cpuinfo|wc -l`
 
 # Default Python version is 2.7
@@ -305,7 +305,7 @@ FUNC_MKBOOTIMG()
 
 FUNC_SEANDROID()
 {
-	echo -n "SEANDROIDENFORCE" >> $PRODUCT_OUT/boot.img
+	echo -n "SEANDROIDENFORCE" >> boot.img
 }
 
 FUNC_SECURE_SIGNING()
