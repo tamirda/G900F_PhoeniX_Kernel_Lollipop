@@ -1173,7 +1173,7 @@ static void __cpuinit start_cpu_timer(int cpu)
 	struct delayed_work *work = &per_cpu(vmstat_work, cpu);
 
 	INIT_DELAYED_WORK_DEFERRABLE(work, vmstat_update);
-	schedule_delayed_work_on(cpu, work, __round_jiffies_relative(HZ, cpu));
+	queue_delayed_work_on(cpu, vmstat_wq, work, __round_jiffies_relative(HZ, cpu));
 }
 
 /*
@@ -1223,6 +1223,7 @@ static int __init setup_vmstat(void)
 
 	register_cpu_notifier(&vmstat_notifier);
 
+	vmstat_wq = alloc_workqueue("vmstat", WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
 	for_each_online_cpu(cpu)
 		start_cpu_timer(cpu);
 #endif
